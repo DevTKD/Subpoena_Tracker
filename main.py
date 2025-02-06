@@ -68,6 +68,30 @@ st.markdown("""
 st.markdown("<h1 style='text-align: center; color: #4CAF50;'>Subpoena Tracker</h1>", unsafe_allow_html=True)
 st.subheader("Log and track the issuance and compliance of subpoenas")
 
+# Load existing data
+submitted_data = load_data()
+
+# Select an entry to edit
+selected_entry = st.selectbox("Select an entry to edit", submitted_data['Subpoena ID'].unique())
+
+# Populate form fields with selected entry's data
+if selected_entry:
+    entry_data = submitted_data[submitted_data['Subpoena ID'] == selected_entry].iloc[0]
+    st.session_state['judicial_branch'] = entry_data['Judicial Branch']
+    st.session_state['jurisdiction'] = entry_data['Jurisdiction']
+    st.session_state['court_information'] = entry_data['Court Information']
+    st.session_state['subpoena_id'] = entry_data['Subpoena ID']
+    st.session_state['case_name'] = entry_data['Case Name']
+    st.session_state['issued_date'] = pd.to_datetime(entry_data['Issued Date'])
+    st.session_state['response_deadline'] = pd.to_datetime(entry_data['Response Deadline'])
+    st.session_state['type_of_subpoena'] = entry_data['Type of Subpoena']
+    st.session_state['issuing_party'] = entry_data['Issuing Party']
+    st.session_state['issuing_party_contact'] = entry_data['Issuing Party Contact']
+    st.session_state['contact_email'] = entry_data['Contact Email']
+    st.session_state['compliance_status'] = entry_data['Compliance Status']
+    st.session_state['response_date'] = pd.to_datetime(entry_data['Response Date'])
+    st.session_state['notes_on_compliance'] = entry_data['Notes on Compliance']
+
 # Adding basic subpoena information
 st.write("### Subpoena Details")
 col1, col2, col3 = st.columns(3)
@@ -156,5 +180,4 @@ submit_data_button = st.button("Submit Data", on_click=submit_data)
 
 # Load and display data from CSV
 st.write("### Submitted Data")
-submitted_data = load_data()
 st.dataframe(submitted_data)
